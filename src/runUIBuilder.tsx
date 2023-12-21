@@ -72,10 +72,10 @@ export default async function main(
       const table = values.table as IWidgetTable;
       const latitudeField = values.latitudeField as IWidgetField;
       const longitudeField = values.longitudeField as IWidgetField;
-      const distanceType = values.distanceType;
+      const distanceType = values.distanceType as string;
       // 选填
-      const outputFieldDistance = values.outputField;
-      const outputFieldDuration = values.outputField_duration;
+      const outputFieldDistance = values.outputField as IWidgetField;
+      const outputFieldDuration = values.outputField_duration as IWidgetField;
 
       // 检查是否填写了必填字段
       if (!table || !latitudeField || !longitudeField || !distanceType) {
