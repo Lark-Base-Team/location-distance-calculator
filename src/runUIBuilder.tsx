@@ -96,11 +96,7 @@ export default async function main(
       }
 
       // 检查两个输出字段是否是同一个字段
-      if (
-        outputFieldDistance &&
-        outputFieldDuration &&
-        outputFieldDistance.id === outputFieldDuration.id
-      ) {
+      if (outputFieldDistance.id === outputFieldDuration.id) {
         uiBuilder.message.error(t("output_field_same_error"));
         throw new Error(t("output_field_same_error"));
       }
