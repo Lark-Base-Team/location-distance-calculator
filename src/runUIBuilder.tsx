@@ -11,7 +11,7 @@ export default async function main(
   uiBuilder: UIBuilder,
   { t }: UseTranslationResponse<"translation", undefined>
 ) {
-  const apiKey = "6e1abfcb4d7681ab33ec051c0a25dfda";  // 高德API密钥
+  const apiKey = "6e1abfcb4d7681ab33ec051c0a25dfda"; // 高德API密钥
   // uiBuilder.markdown(`## ${t('text_title')}`);
   uiBuilder.markdown(t("text_description"));
   uiBuilder.form(
@@ -247,29 +247,29 @@ export default async function main(
 // }
 
 async function calculateDistance(
-  origin: string, 
-  destination: string, 
-  mode: string, 
+  origin: string,
+  destination: string,
+  mode: string,
   apiKey: string,
   errorCallback: (errorMsg: string) => void
-){
+) {
   let url: string;
 
   // 根据不同的出行方式选择不同的API
   switch (mode) {
-    case 'direct':
+    case "direct":
       url = `https://restapi.amap.com/v3/distance?type=0&origins=${origin}&destination=${destination}&key=${apiKey}`;
       break;
-    case 'driving':
+    case "driving":
       url = `https://restapi.amap.com/v3/distance?type=1&origins=${origin}&destination=${destination}&key=${apiKey}`;
       break;
-    case 'walking':
+    case "walking":
       url = `https://restapi.amap.com/v3/distance?type=3&origins=${origin}&destination=${destination}&key=${apiKey}`;
       break;
-    case 'bicycling':
+    case "bicycling":
       url = `https://restapi.amap.com/v4/direction/bicycling?origin=${origin}&destination=${destination}&key=${apiKey}`;
-      break;    
-    case 'transit':
+      break;
+    case "transit":
       url = `https://restapi.amap.com/v3/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     default:
@@ -280,23 +280,28 @@ async function calculateDistance(
     const response = await fetch(url);
     const data = await response.json();
 
-    if (data.status !== "1") {
-      throw new Error("API request failed: " + data.info);
-    }
-
     // 处理返回的结果
     let distance, duration;
     //如果是direct或者walking或者driving模式
-    if (mode === 'direct' || mode === 'walking' || mode === 'driving') {
+    if (mode === "direct" || mode === "walking" || mode === "driving") {
+      if (data.status !== "1") {
+        throw new Error("API request failed: " + data.info);
+      }
       distance = data.results[0].distance / 1000;
       duration = data.results[0].duration / 60;
-    } else if (mode === 'bicycling') {
+    } else if (mode === "bicycling") {
+      if (data.errcode !== "0") {
+        throw new Error("API request failed: " + data.errdetail);
+      }
       distance = data.route.paths[0].distance / 1000;
       duration = data.route.paths[0].duration / 60;
-    }else if (mode === 'transit') { 
+    } else if (mode === "transit") {
+      if (data.status !== "1") {
+        throw new Error("API request failed: " + data.info);
+      }
       distance = 0;
       duration = data.route.transits[0].duration / 60;
-    }else {
+    } else {
       throw new Error("Unknown mode");
     }
     return { distance, duration };
