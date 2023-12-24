@@ -288,14 +288,14 @@ async function calculateDistance(
     let distance, duration;
     //如果是direct或者walking或者driving模式
     if (mode === 'direct' || mode === 'walking' || mode === 'driving') {
-      distance = data.results[0].distance;
-      duration = data.results[0].duration;
+      distance = data.results[0].distance / 1000;
+      duration = data.results[0].duration / 60;
     } else if (mode === 'bicycling') {
-      distance = data.route.paths[0].distance;
-      duration = data.route.paths[0].duration;
+      distance = data.route.paths[0].distance / 1000;
+      duration = data.route.paths[0].duration / 60;
     }else if (mode === 'transit') { 
       distance = 0;
-      duration = data.route.transits[0].duration;
+      duration = data.route.transits[0].duration / 60;
     }else {
       throw new Error("Unknown mode");
     }
