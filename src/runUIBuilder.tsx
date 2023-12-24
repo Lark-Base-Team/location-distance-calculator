@@ -182,49 +182,122 @@ export default async function main(
 //   return deg * (Math.PI / 180);
 // }
 
+// async function calculateDistance(
+//   latitudeLocation: string,
+//   longitudeLocation: string,
+//   distanceType: string,
+//   apiKey: string,
+//   errorCallback: (errorMsg: string) => void
+// ) {
+//   const origins = latitudeLocation;
+//   const destination = longitudeLocation;
+//   let type;
+
+//   switch (distanceType) {
+//     case "direct":
+//       type = 0;
+//       break;
+//     case "driving":
+//       type = 1;
+//       break;
+//     case "walking":
+//       type = 3;
+//       break;
+//     default:
+//       throw new Error("Unknown distance type");
+//   }
+
+//   const url = `https://restapi.amap.com/v3/distance?origins=${origins}&destination=${destination}&type=${type}&key=${apiKey}`;
+
+//   // console.log("url:", url);
+
+//   try {
+//     const response = await fetch(url);
+//     const data = await response.json();
+
+//     if (data.status !== "1") {
+//       throw new Error("AMap API request failed");
+//     }
+//     const result = data.results[0];
+//     // console.log("result:", result);
+//     // console.log("result.distance:", result.distance);
+//     return {
+//       distance: result.distance / 1000, // 转换为千米
+//       duration: result.duration / 60, // 转换为分钟
+//     };
+//   } catch (error) {
+//     if (error instanceof Error) {
+//       console.error(error);
+//       errorCallback(error.message); // 安全地调用错误回调函数
+//     } else {
+//       // 如果 error 不是一个 Error 实例，处理其他情况
+//       console.error("An unknown error occurred");
+//       errorCallback("An unknown error occurred"); // 或者使用一个通用的错误消息
+//     }
+//   }
+// }
+
+// type TravelMode = 'direct' | 'driving' | 'walking' | 'bicycling'  | 'transit';
+
+// interface RouteResult {
+//   distance: string;  // 路径距离
+//   duration: string;  // 预计耗时
+// }
+
 async function calculateDistance(
-  latitudeLocation: string,
-  longitudeLocation: string,
-  distanceType: string,
+  origin: string, 
+  destination: string, 
+  mode: string, 
   apiKey: string,
   errorCallback: (errorMsg: string) => void
-) {
-  const origins = latitudeLocation;
-  const destination = longitudeLocation;
-  let type;
+){
+  let url: string;
 
-  switch (distanceType) {
-    case "direct":
-      type = 0;
+  // 根据不同的出行方式选择不同的API
+  switch (mode) {
+    case 'direct':
+      url = `https://restapi.amap.com/v3/distance?type=0&origins=${origin}&destination=${destination}&key=${apiKey}`;
       break;
-    case "driving":
-      type = 1;
+    case 'driving':
+      url = `https://restapi.amap.com/v3/distance?type=1&origins=${origin}&destination=${destination}&key=${apiKey}`;
       break;
-    case "walking":
-      type = 3;
+    case 'walking':
+      url = `https://restapi.amap.com/v3/distance?type=3&origins=${origin}&destination=${destination}&key=${apiKey}`;
+      break;
+    case 'bicycling':
+      url = `https://restapi.amap.com/v4/direction/${mode}?origin=${origin}&destination=${destination}&key=${apiKey}`;
+      break;    
+    case 'transit':
+      url = `https://restapi.amap.com/v4/direction/${mode}?origin=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     default:
-      throw new Error("Unknown distance type");
+      throw new Error("Unknown mode");
   }
-
-  const url = `https://restapi.amap.com/v3/distance?origins=${origins}&destination=${destination}&type=${type}&key=${apiKey}`;
-
-  // console.log("url:", url);
 
   try {
     const response = await fetch(url);
     const data = await response.json();
 
     if (data.status !== "1") {
-      throw new Error("AMap API request failed");
+      throw new Error("API request failed: " + data.info);
     }
-    const result = data.results[0];
-    // console.log("result:", result);
-    // console.log("result.distance:", result.distance);
-    return {
-      distance: result.distance / 1000, // 转换为千米
-      duration: result.duration / 60, // 转换为分钟
-    };
+
+    // 处理返回的结果
+    let distance, duration;
+    //如果是direct或者walking或者driving模式
+    if (mode === 'direct' || mode === 'walking' || mode === 'driving') {
+      distance = data.results[0].distance;
+      duration = data.results[0].duration;
+    } else if (mode === 'bicycling') {
+      distance = data.route.paths[0].distance;
+      duration = data.route.paths[0].duration;
+    }else if (mode === 'transit') { 
+      distance = 0;
+      duration = data.route.transits[0].duration;
+    }else {
+      throw new Error("Unknown mode");
+    }
+    return { distance, duration };
   } catch (error) {
     if (error instanceof Error) {
       console.error(error);
