@@ -304,7 +304,7 @@ async function calculateDistance(
       distance = data.results[0].distance / 1000;
       duration = data.results[0].duration / 60;
     } else if (mode === "bicycling") {
-      if (data.errcode !== "0") {
+      if (data.errcode !== 0) {
         throw new Error("API request failed: " + data.errdetail);
       }
       distance = data.route.paths[0].distance / 1000;
