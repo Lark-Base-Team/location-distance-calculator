@@ -256,7 +256,7 @@ async function calculateDistance(
       if (data.status !== "1") {
         throw new Error(data.info);
       }
-      distance = 0;
+      distance = data.route.transits[0].walking_distance / 1000;
       duration = data.route.transits[0].duration / 60;
     } else {
       throw new Error("Unknown mode");
