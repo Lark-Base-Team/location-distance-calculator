@@ -41,13 +41,15 @@ export default async function main(
 
         // 选择距离模式
         form.select("distanceType", {
-          label: t("select_distance_type"),
+          label: t("select_type"),
           options: [
-            { label: t("direct_distance"), value: "direct" },
-            { label: t("driving_distance"), value: "driving" },
-            { label: t("walking_distance"), value: "walking" },
+            { label: t("direct"), value: "direct" },
+            { label: t("driving"), value: "driving" },
+            { label: t("walking"), value: "walking" },
+            { label: t("bicycling"), value: "bicycling" },
+            { label: t("transit"), value: "transit" },
           ],
-          placeholder: t("select_distance_type_placeholder"),
+          placeholder: t("select_type_placeholder"),
         }),
 
         // 选择输出字段：距离
