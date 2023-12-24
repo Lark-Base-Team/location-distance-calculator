@@ -75,9 +75,15 @@ export default async function main(
       const latitudeField = values.latitudeField as ILocationField;
       const longitudeField = values.longitudeField as ILocationField;
       const distanceType = values.distanceType as string;
+      console.log("table:", table);
+      console.log("latitudeField:", latitudeField);
+      console.log("longitudeField:", longitudeField);
+      console.log("distanceType:", distanceType);
       // 选填
       const outputFieldDistance = values.outputField as INumberField;
       const outputFieldDuration = values.outputField_duration as INumberField;
+      console.log("outputFieldDistance:", outputFieldDistance);
+      console.log("outputFieldDuration:", outputFieldDuration);
 
       // 检查是否填写了必填字段
       if (!table || !latitudeField || !longitudeField || !distanceType) {
