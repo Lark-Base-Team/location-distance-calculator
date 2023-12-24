@@ -267,10 +267,10 @@ async function calculateDistance(
       url = `https://restapi.amap.com/v3/distance?type=3&origins=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     case 'bicycling':
-      url = `https://restapi.amap.com/v4/direction/${mode}?origin=${origin}&destination=${destination}&key=${apiKey}`;
+      url = `https://restapi.amap.com/v4/direction/bicycling?origin=${origin}&destination=${destination}&key=${apiKey}`;
       break;    
     case 'transit':
-      url = `https://restapi.amap.com/v4/direction/${mode}?origin=${origin}&destination=${destination}&key=${apiKey}`;
+      url = `https://restapi.amap.com/v3/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     default:
       throw new Error("Unknown mode");
