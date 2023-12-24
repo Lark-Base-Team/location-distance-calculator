@@ -314,7 +314,7 @@ async function calculateDistance(
         throw new Error("API request failed: " + data.infocode +" " + data.info);
       }
       distance = data.route.transits[0].distance / 1000;
-      duration = data.route.transits[0].duration / 60;
+      duration = data.route.transits[0].cost.duration / 60;
     } else {
       throw new Error("Unknown mode");
     }
