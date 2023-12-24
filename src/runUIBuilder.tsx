@@ -267,10 +267,10 @@ async function calculateDistance(
       url = `https://restapi.amap.com/v3/distance?type=3&origins=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     case "bicycling":
-      url = `https://restapi.amap.com/v5/direction/bicycling?origin=${origin}&destination=${destination}&key=${apiKey}&show_fields=cost`;
+      url = `https://restapi.amap.com/v5/direction/bicycling?origin=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     case "transit":
-      url = `https://restapi.amap.com/v3/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}`;
+      url = `https://restapi.amap.com/v5/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     default:
       throw new Error("Unknown mode");
@@ -291,15 +291,15 @@ async function calculateDistance(
       duration = data.results[0].duration / 60;
     } else if (mode === "bicycling") {
       if (data.status !== "1") {
-        throw new Error("API request failed: " + data.infocode + data.info);
+        throw new Error("API request failed: " + data.infocode +" " + data.info);
       }
       distance = data.route.paths[0].distance / 1000;
       duration = data.route.paths[0].duration / 60;
     } else if (mode === "transit") {
       if (data.status !== "1") {
-        throw new Error("API request failed: " + data.info);
+        throw new Error("API request failed: " + data.infocode +" " + data.info);
       }
-      distance = 0;
+      distance = data.route.transits[0].distance / 1000;
       duration = data.route.transits[0].duration / 60;
     } else {
       throw new Error("Unknown mode");
