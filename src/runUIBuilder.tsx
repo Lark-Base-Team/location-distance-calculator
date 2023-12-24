@@ -283,7 +283,7 @@ async function calculateDistance(
       url = `https://restapi.amap.com/v5/direction/bicycling?origin=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     case "transit":
-      url = `https://restapi.amap.com/v5/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}&city1=${originCityCode}&city2=${destinationCityCode}&show_fields=distance,duration`;
+      url = `https://restapi.amap.com/v5/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}&city1=${originCityCode}&city2=${destinationCityCode}&show_fields=cost`;
       break;
     default:
       throw new Error("Unknown mode");
@@ -292,6 +292,7 @@ async function calculateDistance(
   try {
     const response = await fetch(url);
     const data = await response.json();
+    console.log("data:", data);
 
     // 处理返回的结果
     let distance, duration;
