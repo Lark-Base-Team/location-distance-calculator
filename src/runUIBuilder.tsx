@@ -11,6 +11,7 @@ export default async function main(
   uiBuilder: UIBuilder,
   { t }: UseTranslationResponse<"translation", undefined>
 ) {
+  const apiKey = "6e1abfcb4d7681ab33ec051c0a25dfda";  // 高德API密钥
   // uiBuilder.markdown(`## ${t('text_title')}`);
   uiBuilder.markdown(t("text_description"));
   uiBuilder.form(
@@ -130,7 +131,7 @@ export default async function main(
           latitudeLocation,
           longitudeLocation,
           distanceType,
-          "6e1abfcb4d7681ab33ec051c0a25dfda",
+          apiKey,
           (errorMsg) => {
             uiBuilder.hideLoading();
             uiBuilder.message.error(t("APIerror") + ": " + errorMsg); // 显示具体的错误消息
