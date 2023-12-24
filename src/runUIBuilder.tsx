@@ -307,8 +307,8 @@ async function calculateDistance(
       if (data.errcode !== 0) {
         throw new Error("API request failed: " + data.errdetail);
       }
-      distance = data.route.paths[0].distance / 1000;
-      duration = data.route.paths[0].duration / 60;
+      distance = data.data.paths[0].distance / 1000;
+      duration = data.data.paths[0].duration / 60;
     } else if (mode === "transit") {
       if (data.status !== "1") {
         throw new Error("API request failed: " + data.info);
