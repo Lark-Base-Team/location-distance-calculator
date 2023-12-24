@@ -6,6 +6,7 @@ import {
   UIBuilder,
 } from "@lark-base-open/js-sdk";
 import { UseTranslationResponse } from "react-i18next";
+require("dotenv").config();
 
 export default async function main(
   uiBuilder: UIBuilder,
@@ -185,9 +186,9 @@ async function calculateDistance(
   latitudeLocation: string,
   longitudeLocation: string,
   distanceType: string,
-  apiKey: string,
   errorCallback: (errorMsg: string) => void
 ) {
+  const apiKey = process.env.API_KEY; // 从环境变量中获取 API 密钥
   const origins = latitudeLocation;
   const destination = longitudeLocation;
   let type;
