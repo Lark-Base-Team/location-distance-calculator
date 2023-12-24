@@ -117,7 +117,9 @@ export default async function main(
         const longitudeVal = await longitudeField.getValue(recordId);
         const latitudeLocation = latitudeVal.location;
         const longitudeLocation = longitudeVal.location;
-        
+
+        console.log("latitudeLocation:", latitudeLocation);
+        console.log("longitudeLocation:", longitudeLocation);        
 
         const { distance, duration } = await calculateDistance(
           latitudeLocation,
@@ -129,6 +131,9 @@ export default async function main(
             uiBuilder.message.error(t("APIerror")); // 显示错误消息
           }
         );
+
+        console.log("distance:", distance);
+        console.log("duration:", duration);
         if (outputFieldDistance) {
           await outputFieldDistance.setValue(recordId, distance);
         }
