@@ -126,7 +126,7 @@ export default async function main(
 
         const latitudeLocation = latitudeVal.location;
         const longitudeLocation = longitudeVal.location;
-        const latitudeCity = longitudeVal.cityname;
+        const latitudeCity = latitudeVal.cityname;
         const longitudeCity = longitudeVal.cityname;
         console.log("latitudeCity:", latitudeCity);
         console.log("longitudeCity:", longitudeCity);
