@@ -128,8 +128,12 @@ export default async function main(
         const longitudeLocation = longitudeVal.location;
         const latitudeCity = longitudeVal.cityname;
         const longitudeCity = longitudeVal.cityname;
+        console.log("latitudeCity:", latitudeCity);
+        console.log("longitudeCity:", longitudeCity);
         const latitudeCityCode = cityCodes[latitudeCity];
         const longitudeCityCode = cityCodes[longitudeCity];
+        console.log("latitudeCityCode:", latitudeCityCode);
+        console.log("longitudeCityCode:", longitudeCityCode);
 
         console.log("latitudeLocation:", latitudeLocation);
         console.log("longitudeLocation:", longitudeLocation);
@@ -279,7 +283,7 @@ async function calculateDistance(
       url = `https://restapi.amap.com/v5/direction/bicycling?origin=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     case "transit":
-      url = `https://restapi.amap.com/v5/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}&city1=${originCityCode}&city2=${destinationCityCode}`;
+      url = `https://restapi.amap.com/v5/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}&city1=${originCityCode}&city2=${destinationCityCode}&show_fields=distance,duration`;
       break;
     default:
       throw new Error("Unknown mode");
