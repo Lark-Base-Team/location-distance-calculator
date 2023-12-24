@@ -130,10 +130,10 @@ export default async function main(
         const longitudeCity = longitudeVal.cityname;
         console.log("latitudeCity:", latitudeCity);
         console.log("longitudeCity:", longitudeCity);
-        const latitudeCityCode = cityCodes[latitudeCity];
-        const longitudeCityCode = cityCodes[longitudeCity];
-        console.log("latitudeCityCode:", latitudeCityCode);
-        console.log("longitudeCityCode:", longitudeCityCode);
+        // const latitudeCityCode = cityCodes[latitudeCity];
+        // const longitudeCityCode = cityCodes[longitudeCity];
+        // console.log("latitudeCityCode:", latitudeCityCode);
+        // console.log("longitudeCityCode:", longitudeCityCode);
 
         console.log("latitudeLocation:", latitudeLocation);
         console.log("longitudeLocation:", longitudeLocation);
@@ -141,8 +141,8 @@ export default async function main(
         const result = await calculateDistance(
           latitudeLocation,
           longitudeLocation,
-          latitudeCityCode,
-          longitudeCityCode,
+          latitudeCity,
+          longitudeCity,
           distanceType,
           apiKey,
           (errorMsg) => {
@@ -260,8 +260,8 @@ export default async function main(
 async function calculateDistance(
   origin: string,
   destination: string,
-  originCityCode: string,
-  destinationCityCode: string,
+  originCity: string,
+  destinationCity: string,
   mode: string,
   apiKey: string,
   errorCallback: (errorMsg: string) => void
@@ -280,10 +280,10 @@ async function calculateDistance(
       url = `https://restapi.amap.com/v3/distance?type=3&origins=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     case "bicycling":
-      url = `https://restapi.amap.com/v5/direction/bicycling?origin=${origin}&destination=${destination}&key=${apiKey}`;
+      url = `https://restapi.amap.com/v4/direction/bicycling?origin=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     case "transit":
-      url = `https://restapi.amap.com/v5/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}&city1=${originCityCode}&city2=${destinationCityCode}&show_fields=cost`;
+      url = `https://restapi.amap.com/v3/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}&city=${originCity}&cityd=${destinationCity}`;
       break;
     default:
       throw new Error("Unknown mode");
@@ -304,17 +304,17 @@ async function calculateDistance(
       distance = data.results[0].distance / 1000;
       duration = data.results[0].duration / 60;
     } else if (mode === "bicycling") {
-      if (data.status !== "1") {
-        throw new Error("API request failed: " + data.infocode +" " + data.info);
+      if (data.errcode !== "0") {
+        throw new Error("API request failed: " + data.errdetail);
       }
       distance = data.route.paths[0].distance / 1000;
       duration = data.route.paths[0].duration / 60;
     } else if (mode === "transit") {
       if (data.status !== "1") {
-        throw new Error("API request failed: " + data.infocode +" " + data.info);
+        throw new Error("API request failed: " + data.info);
       }
-      distance = data.route.transits[0].distance / 1000;
-      duration = data.route.transits[0].cost.duration / 60;
+      distance = 0;
+      duration = data.route.transits[0].duration / 60;
     } else {
       throw new Error("Unknown mode");
     }
