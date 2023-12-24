@@ -1,8 +1,10 @@
 import {
   FieldType,
-  IWidgetField,
-  IWidgetTable,
+  ITable,
+  ILocationField,
+  INumberField,
   UIBuilder,
+  IOpenLocation,
 } from "@lark-base-open/js-sdk";
 import { UseTranslationResponse } from "react-i18next";
 
@@ -69,13 +71,13 @@ export default async function main(
     }),
     async ({ values }) => {
       // 必填
-      const table = values.table as IWidgetTable;
-      const latitudeField = values.latitudeField as IWidgetField;
-      const longitudeField = values.longitudeField as IWidgetField;
+      const table = values.table as ITable;
+      const latitudeField = values.latitudeField as ILocationField;
+      const longitudeField = values.longitudeField as ILocationField;
       const distanceType = values.distanceType as string;
       // 选填
-      const outputFieldDistance = values.outputField as IWidgetField;
-      const outputFieldDuration = values.outputField_duration as IWidgetField;
+      const outputFieldDistance = values.outputField as INumberField;
+      const outputFieldDuration = values.outputField_duration as INumberField;
 
       // 检查是否填写了必填字段
       if (!table || !latitudeField || !longitudeField || !distanceType) {
@@ -103,43 +105,17 @@ export default async function main(
 
       uiBuilder.showLoading(t("processing_data"));
 
-      // 获取纪录列表
-      const latitudeRecords = await latitudeField.getFieldValueList();
-      const longitudeRecords = await longitudeField.getFieldValueList();
-
-      // console.log("latitudeRecords:", latitudeRecords);
-      // console.log("longitudeRecords:", longitudeRecords);
-
-      // 检查是否有缺失的经纬度记录
-      latitudeRecords.forEach((latRecord, index) => {
-        if (!longitudeRecords[index]) {
-          uiBuilder.hideLoading();
-          uiBuilder.message.error(
-            t("longitude_record_missing_error", {
-              recordId: latRecord.record_id,
-            })
-          );
-          throw new Error(
-            t("longitude_record_missing_error", {
-              recordId: latRecord.record_id,
-            })
-          );
-        }
-      });
-
-      const updates = [];
-      for (let index = 0; index < latitudeRecords.length; index++) {
-        const latRecord = latitudeRecords[index];
-        const [lon1, lat1] = latRecord.value.location.split(",").map(Number);
-        const [lon2, lat2] = longitudeRecords[index].value.location
-          .split(",")
-          .map(Number);
+      const recordIdList = await table.getRecordIdList();
+      for (const recordId of recordIdList) {
+        const latitudeVal = await latitudeField.getValue(recordId);
+        const longitudeVal = await longitudeField.getValue(recordId);
+        const latitudeLocation = latitudeVal.location;
+        const longitudeLocation = longitudeVal.location;
+        
 
         const { distance, duration } = await calculateDistance(
-          lon1,
-          lat1,
-          lon2,
-          lat2,
+          latitudeLocation,
+          longitudeLocation,
           distanceType,
           "6e1abfcb4d7681ab33ec051c0a25dfda",
           (errorMsg) => {
@@ -147,31 +123,13 @@ export default async function main(
             uiBuilder.message.error(t("APIerror")); // 显示错误消息
           }
         );
-
-        const fields = {};
         if (outputFieldDistance) {
-          fields[outputFieldDistance.id] = distance; // 千米
+          await outputFieldDistance.setValue(recordId, distance);
         }
         if (outputFieldDuration) {
-          fields[outputFieldDuration.id] = duration; // 分钟
+          await outputFieldDuration.setValue(recordId, duration);
         }
-
-        updates.push({
-          recordId: latRecord.record_id,
-          fields,
-        });
-      }
-
-      // 分批处理，每批不超过 5000 条记录
-      const BATCH_SIZE = 5000;
-      for (let i = 0; i < updates.length; i += BATCH_SIZE) {
-        const batchUpdates = updates.slice(i, i + BATCH_SIZE);
-        if (batchUpdates.length > 0) {
-          const res = await table.setRecords(batchUpdates);
-          console.log(res);
-        }
-      }
-
+      }      
       uiBuilder.hideLoading();
       uiBuilder.message.success(t("completed"));
     }
@@ -202,16 +160,14 @@ export default async function main(
 // }
 
 async function calculateDistance(
-  lon1,
-  lat1,
-  lon2,
-  lat2,
-  distanceType,
-  apiKey,
-  errorCallback
+  latitudeLocation: string,
+  longitudeLocation: string,
+  distanceType: string,
+  apiKey: string,
+  errorCallback: string
 ) {
-  const origins = `${lon1},${lat1}`;
-  const destination = `${lon2},${lat2}`;
+  const origins = latitudeLocation;
+  const destination = longitudeLocation;
   let type;
 
   switch (distanceType) {
