@@ -14,7 +14,11 @@ export default async function main(
 ) {
   const apiKey = "6e1abfcb4d7681ab33ec051c0a25dfda"; // 高德API密钥
   // uiBuilder.markdown(`## ${t('text_title')}`);
-  uiBuilder.markdown(t("text_description"));
+  // uiBuilder.markdown(t("text_description"));
+  // uiBuilder.markdown(t("text_description_2"));
+  uiBuilder.markdown(`> ${t("text_description")}  
+   > ${t("text_description_2")} `);
+
   uiBuilder.form(
     (form) => ({
       formItems: [

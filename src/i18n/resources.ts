@@ -2,7 +2,8 @@ const resources = {
   zh: {
     translation: {
       "text_title": "地理位置距离计算",
-      "text_description": "> 🚗批量计算地理位置之间各种交通方式的距离及所需时间/n👉[演示与使用说明](https://fexakcngwi.feishu.cn/docx/TDb1dc7uIoD4IXx0QYHcn7yQnxb)",
+      "text_description": "🚗 批量计算地理位置之间各种交通方式的距离及所需时间",
+      "text_description_2": "👉 [演示与使用说明](https://fexakcngwi.feishu.cn/docx/TDb1dc7uIoD4IXx0QYHcn7yQnxb)",
       "select_table": "选择数据表 - 必填",
       "select_table_placeholder": "请选择",
       "select_latitude_field": "输入字段1 - 必填",
