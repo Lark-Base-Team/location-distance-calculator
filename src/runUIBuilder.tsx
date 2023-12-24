@@ -115,11 +115,17 @@ export default async function main(
       for (const recordId of recordIdList) {
         const latitudeVal = await latitudeField.getValue(recordId);
         const longitudeVal = await longitudeField.getValue(recordId);
+
+        if (!latitudeVal || !longitudeVal) {
+          // 处理空值的情况，例如显示错误信息或跳过当前记录
+          continue;
+        }
+
         const latitudeLocation = latitudeVal.location;
         const longitudeLocation = longitudeVal.location;
 
         console.log("latitudeLocation:", latitudeLocation);
-        console.log("longitudeLocation:", longitudeLocation);        
+        console.log("longitudeLocation:", longitudeLocation);
 
         const { distance, duration } = await calculateDistance(
           latitudeLocation,
@@ -140,7 +146,7 @@ export default async function main(
         if (outputFieldDuration) {
           await outputFieldDuration.setValue(recordId, duration);
         }
-      }      
+      }
       uiBuilder.hideLoading();
       uiBuilder.message.success(t("completed"));
     }
