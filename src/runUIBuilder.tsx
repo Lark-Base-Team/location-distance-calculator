@@ -20,8 +20,8 @@ export default async function main(
       formItems: [
         // 选择数据表
         form.tableSelect("table", {
-          label: t("select_data_table"),
-          placeholder: t("select_data_table_placeholder"),
+          label: t("select_table"),
+          placeholder: t("select_table_placeholder"),
         }),
 
         // 选择地理位置字段
@@ -54,10 +54,10 @@ export default async function main(
         }),
 
         // 选择输出字段：距离
-        form.fieldSelect("outputField", {
-          label: t("select_output_field"),
+        form.fieldSelect("outputField_distance", {
+          label: t("select_output_field_distance"),
           sourceTable: "table",
-          placeholder: t("select_output_field_placeholder"),
+          placeholder: t("select_output_field_distance_placeholder"),
           multiple: false,
           filterByTypes: [FieldType.Number as any],
         }),
@@ -83,7 +83,7 @@ export default async function main(
       console.log("longitudeField:", longitudeField);
       console.log("distanceType:", distanceType);
       // 选填
-      const outputFieldDistance = values.outputField as INumberField;
+      const outputFieldDistance = values.outputField_distance as INumberField;
       const outputFieldDuration = values.outputField_duration as INumberField;
       console.log("outputFieldDistance:", outputFieldDistance);
       console.log("outputFieldDuration:", outputFieldDuration);
