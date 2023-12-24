@@ -4,7 +4,6 @@ import {
   ILocationField,
   INumberField,
   UIBuilder,
-  IOpenLocation,
 } from "@lark-base-open/js-sdk";
 import { UseTranslationResponse } from "react-i18next";
 
@@ -127,24 +126,30 @@ export default async function main(
         console.log("latitudeLocation:", latitudeLocation);
         console.log("longitudeLocation:", longitudeLocation);
 
-        const { distance, duration } = await calculateDistance(
+        const result = await calculateDistance(
           latitudeLocation,
           longitudeLocation,
           distanceType,
           "6e1abfcb4d7681ab33ec051c0a25dfda",
           (errorMsg) => {
             uiBuilder.hideLoading();
-            uiBuilder.message.error(t("APIerror")); // 显示错误消息
+            uiBuilder.message.error(t("APIerror") + ": " + errorMsg); // 显示具体的错误消息
           }
         );
 
-        console.log("distance:", distance);
-        console.log("duration:", duration);
-        if (outputFieldDistance) {
-          await outputFieldDistance.setValue(recordId, distance);
-        }
-        if (outputFieldDuration) {
-          await outputFieldDuration.setValue(recordId, duration);
+        if (result) {
+          console.log("distance:", result.distance);
+          console.log("duration:", result.duration);
+          if (outputFieldDistance) {
+            await outputFieldDistance.setValue(recordId, result.distance);
+          }
+          if (outputFieldDuration) {
+            await outputFieldDuration.setValue(recordId, result.duration);
+          }
+        } else {
+          // 处理结果为undefined的情况
+          uiBuilder.message.error(t("APIerror")); // 显示错误消息
+          continue;
         }
       }
       uiBuilder.hideLoading();
@@ -181,7 +186,7 @@ async function calculateDistance(
   longitudeLocation: string,
   distanceType: string,
   apiKey: string,
-  errorCallback: string
+  errorCallback: (errorMsg: string) => void
 ) {
   const origins = latitudeLocation;
   const destination = longitudeLocation;
@@ -220,7 +225,13 @@ async function calculateDistance(
       duration: result.duration / 60, // 转换为分钟
     };
   } catch (error) {
-    console.error(error);
-    errorCallback(error.message); // 调用错误回调函数
+    if (error instanceof Error) {
+      console.error(error);
+      errorCallback(error.message); // 安全地调用错误回调函数
+    } else {
+      // 如果 error 不是一个 Error 实例，处理其他情况
+      console.error("An unknown error occurred");
+      errorCallback("An unknown error occurred"); // 或者使用一个通用的错误消息
+    }
   }
 }
