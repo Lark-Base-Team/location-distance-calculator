@@ -6,7 +6,7 @@ import {
   UIBuilder,
 } from "@lark-base-open/js-sdk";
 import { UseTranslationResponse } from "react-i18next";
-import { cityCodes } from './CityCodes';
+// import { cityCodes } from './CityCodes';
 
 export default async function main(
   uiBuilder: UIBuilder,
@@ -128,15 +128,14 @@ export default async function main(
         const longitudeLocation = longitudeVal.location;
         const latitudeCity = latitudeVal.cityname;
         const longitudeCity = longitudeVal.cityname;
+        console.log("latitudeLocation:", latitudeLocation);
+        console.log("longitudeLocation:", longitudeLocation);
         console.log("latitudeCity:", latitudeCity);
         console.log("longitudeCity:", longitudeCity);
         // const latitudeCityCode = cityCodes[latitudeCity];
         // const longitudeCityCode = cityCodes[longitudeCity];
         // console.log("latitudeCityCode:", latitudeCityCode);
         // console.log("longitudeCityCode:", longitudeCityCode);
-
-        console.log("latitudeLocation:", latitudeLocation);
-        console.log("longitudeLocation:", longitudeLocation);
 
         const result = await calculateDistance(
           latitudeLocation,
@@ -162,7 +161,7 @@ export default async function main(
           }
         } else {
           // 处理结果为undefined的情况
-          uiBuilder.message.error(t("APIerror")); // 显示错误消息
+          // uiBuilder.message.error(t("APIerror")); // 显示错误消息
           continue;
         }
       }
@@ -299,19 +298,19 @@ async function calculateDistance(
     //如果是direct或者walking或者driving模式
     if (mode === "direct" || mode === "walking" || mode === "driving") {
       if (data.status !== "1") {
-        throw new Error("API request failed: " + data.info);
+        throw new Error(data.info);
       }
       distance = data.results[0].distance / 1000;
       duration = data.results[0].duration / 60;
     } else if (mode === "bicycling") {
       if (data.errcode !== 0) {
-        throw new Error("API request failed: " + data.errdetail);
+        throw new Error(data.errdetail);
       }
       distance = data.data.paths[0].distance / 1000;
       duration = data.data.paths[0].duration / 60;
     } else if (mode === "transit") {
       if (data.status !== "1") {
-        throw new Error("API request failed: " + data.info);
+        throw new Error(data.info);
       }
       distance = 0;
       duration = data.route.transits[0].duration / 60;
