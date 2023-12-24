@@ -145,7 +145,6 @@ export default async function main(
           distanceType,
           apiKey,
           (errorMsg) => {
-            uiBuilder.hideLoading();
             uiBuilder.message.error(t("APIerror") + ": " + errorMsg); // 显示具体的错误消息
           }
         );
@@ -192,61 +191,6 @@ export default async function main(
 
 // function deg2rad(deg) {
 //   return deg * (Math.PI / 180);
-// }
-
-// async function calculateDistance(
-//   latitudeLocation: string,
-//   longitudeLocation: string,
-//   distanceType: string,
-//   apiKey: string,
-//   errorCallback: (errorMsg: string) => void
-// ) {
-//   const origins = latitudeLocation;
-//   const destination = longitudeLocation;
-//   let type;
-
-//   switch (distanceType) {
-//     case "direct":
-//       type = 0;
-//       break;
-//     case "driving":
-//       type = 1;
-//       break;
-//     case "walking":
-//       type = 3;
-//       break;
-//     default:
-//       throw new Error("Unknown distance type");
-//   }
-
-//   const url = `https://restapi.amap.com/v3/distance?origins=${origins}&destination=${destination}&type=${type}&key=${apiKey}`;
-
-//   // console.log("url:", url);
-
-//   try {
-//     const response = await fetch(url);
-//     const data = await response.json();
-
-//     if (data.status !== "1") {
-//       throw new Error("AMap API request failed");
-//     }
-//     const result = data.results[0];
-//     // console.log("result:", result);
-//     // console.log("result.distance:", result.distance);
-//     return {
-//       distance: result.distance / 1000, // 转换为千米
-//       duration: result.duration / 60, // 转换为分钟
-//     };
-//   } catch (error) {
-//     if (error instanceof Error) {
-//       console.error(error);
-//       errorCallback(error.message); // 安全地调用错误回调函数
-//     } else {
-//       // 如果 error 不是一个 Error 实例，处理其他情况
-//       console.error("An unknown error occurred");
-//       errorCallback("An unknown error occurred"); // 或者使用一个通用的错误消息
-//     }
-//   }
 // }
 
 // type TravelMode = 'direct' | 'driving' | 'walking' | 'bicycling'  | 'transit';
