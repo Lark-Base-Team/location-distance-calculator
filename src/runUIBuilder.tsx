@@ -6,6 +6,7 @@ import {
   UIBuilder,
 } from "@lark-base-open/js-sdk";
 import { UseTranslationResponse } from "react-i18next";
+import { cityCodes } from './CityCodes';
 
 export default async function main(
   uiBuilder: UIBuilder,
@@ -125,6 +126,10 @@ export default async function main(
 
         const latitudeLocation = latitudeVal.location;
         const longitudeLocation = longitudeVal.location;
+        const latitudeCity = longitudeVal.cityname;
+        const longitudeCity = longitudeVal.cityname;
+        const latitudeCityCode = cityCodes[latitudeCity];
+        const longitudeCityCode = cityCodes[longitudeCity];
 
         console.log("latitudeLocation:", latitudeLocation);
         console.log("longitudeLocation:", longitudeLocation);
@@ -132,6 +137,8 @@ export default async function main(
         const result = await calculateDistance(
           latitudeLocation,
           longitudeLocation,
+          latitudeCityCode,
+          longitudeCityCode,
           distanceType,
           apiKey,
           (errorMsg) => {
@@ -249,6 +256,8 @@ export default async function main(
 async function calculateDistance(
   origin: string,
   destination: string,
+  originCityCode: string,
+  destinationCityCode: string,
   mode: string,
   apiKey: string,
   errorCallback: (errorMsg: string) => void
@@ -270,7 +279,7 @@ async function calculateDistance(
       url = `https://restapi.amap.com/v5/direction/bicycling?origin=${origin}&destination=${destination}&key=${apiKey}`;
       break;
     case "transit":
-      url = `https://restapi.amap.com/v5/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}`;
+      url = `https://restapi.amap.com/v5/direction/transit/integrated?origin=${origin}&destination=${destination}&key=${apiKey}&city1=${originCityCode}&city2=${destinationCityCode}`;
       break;
     default:
       throw new Error("Unknown mode");
