@@ -118,7 +118,20 @@ export default async function main(
 
       uiBuilder.showLoading(t("processing_data"));
 
-      const recordIdList = await table.getRecordIdList();
+      let recordIdList:string[] = []
+      let hasMorePage = false
+      let nextPageToken: number | undefined = undefined
+      do {
+        const { hasMore, pageToken, recordIds } = await table.getRecordIdListByPage({
+            pageToken: nextPageToken,
+            pageSize: 200
+        })
+        nextPageToken = pageToken
+        hasMorePage = hasMore
+        recordIdList = recordIdList.concat(recordIds)
+      } while (hasMorePage)
+      const total = recordIdList.length
+      let num = 0
       for (const recordId of recordIdList) {
         const latitudeVal = await latitudeField.getValue(recordId);
         const longitudeVal = await longitudeField.getValue(recordId);
@@ -152,6 +165,8 @@ export default async function main(
             uiBuilder.message.error(t("APIerror") + ": " + errorMsg); // 显示具体的错误消息
           }
         );
+        num++
+        uiBuilder.showLoading(t("processing_data") +(num/total*100).toFixed(2) + '%');
 
         if (result) {
           console.log("distance:", result.distance);
