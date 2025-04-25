@@ -73,6 +73,14 @@ export default async function main(
           multiple: false,
           filterByTypes: [FieldType.Number as any],
         }),
+
+        // 高级选项：自定义 API Key
+        form.input("customApiKey", {
+          label: t("custom_api_key_label"),
+          placeholder: t("custom_api_key_placeholder"),
+          helperText: t("custom_api_key_helper"),
+          required: false, // 标记为非必填
+        }),
       ],
       buttons: [t("button")],
     }),
@@ -91,6 +99,14 @@ export default async function main(
       const outputFieldDuration = values.outputField_duration as INumberField;
       console.log("outputFieldDistance:", outputFieldDistance);
       console.log("outputFieldDuration:", outputFieldDuration);
+
+      // 获取用户自定义 API Key
+      const customApiKey = values.customApiKey as string | undefined;
+      console.log("customApiKey:", customApiKey);
+
+      // 确定最终使用的 API Key
+      const finalApiKey = customApiKey || apiKey; // 如果用户提供了自定义key，则使用它，否则使用默认key
+      console.log("Using API Key:", finalApiKey.substring(0, 5) + "..."); // 打印部分key用于调试，隐藏完整key
 
       // 检查是否填写了必填字段
       if (!table || !latitudeField || !longitudeField || !distanceType) {
@@ -160,7 +176,7 @@ export default async function main(
           latitudeCity,
           longitudeCity,
           distanceType,
-          apiKey,
+          finalApiKey, // 使用最终确定的 API Key
           (errorMsg) => {
             uiBuilder.message.error(t("APIerror") + ": " + errorMsg); // 显示具体的错误消息
           }

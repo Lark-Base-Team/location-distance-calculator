@@ -30,6 +30,9 @@ const resources = {
       output_field_error: "两个输出字段请至少填写一个",
       latitude_longitude_field_error: "两个输入字段不能一致",
       output_field_same_error: "两个输出字段不能一致",
+      custom_api_key_label: "自定义高德 API Key - 选填",
+      custom_api_key_placeholder: "请输入您的高德 Web 服务 API Key",
+      custom_api_key_helper: "若不填写，将使用插件内置 Key (有调用次数限制)",
     },
   },
   en: {
@@ -72,6 +75,10 @@ const resources = {
       latitude_longitude_field_error:
         "The Two Location Fields Cannot Be the Same",
       output_field_same_error: "The Two Output Fields Cannot Be the Same",
+      custom_api_key_label: "Custom Gaode API Key (Optional)",
+      custom_api_key_placeholder: "Enter your Gaode Web Service API Key",
+      custom_api_key_helper:
+        "If left blank, the built-in key will be used (subject to usage limits)",
     },
   },
 };
